@@ -1,0 +1,23 @@
+[
+  "num__semester",
+  "num__previous_cgpa",
+  "num__previous_percentage",
+  "num__internal_marks",
+  "num__assignment_score",
+  "num__assignment_completion_pct",
+  "num__attendance_pct",
+  "num__study_hours_daily",
+  "num__backlogs",
+  "num__study_consistency",
+  "num__extracurricular",
+  "num__mathematics_marks",
+  "num__programming_marks",
+  "num__core_theory_marks",
+  "num__lab_practical_marks",
+  "num__communication_marks",
+  "cat__department_CSE",
+  "cat__department_Civil",
+  "cat__department_ECE",
+  "cat__department_IT",
+  "cat__department_Mechanical"
+]

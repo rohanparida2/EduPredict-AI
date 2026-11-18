@@ -1,0 +1,192 @@
+{
+  "regression": {
+    "MAE": 0.25168719999999967,
+    "RMSE": 0.3097584181777793,
+    "R2": 0.9018547871240072,
+    "ExplainedVariance": 0.9019865751123035
+  },
+  "classification": {
+    "accuracy": 0.75,
+    "confusion_matrix": [
+      [
+        56,
+        0,
+        15,
+        3
+      ],
+      [
+        0,
+        8,
+        6,
+        0
+      ],
+      [
+        16,
+        5,
+        78,
+        0
+      ],
+      [
+        5,
+        0,
+        0,
+        8
+      ]
+    ],
+    "f1_macro": 0.6972149753606707,
+    "per_class": {
+      "Average": {
+        "precision": 0.7272727272727273,
+        "recall": 0.7567567567567568,
+        "f1": 0.7417218543046358,
+        "support": 74
+      },
+      "Excellent": {
+        "precision": 0.6153846153846154,
+        "recall": 0.5714285714285714,
+        "f1": 0.5925925925925926,
+        "support": 14
+      },
+      "Good": {
+        "precision": 0.7878787878787878,
+        "recall": 0.7878787878787878,
+        "f1": 0.7878787878787878,
+        "support": 99
+      },
+      "Needs Improvement": {
+        "precision": 0.7272727272727273,
+        "recall": 0.6153846153846154,
+        "f1": 0.6666666666666666,
+        "support": 13
+      }
+    }
+  },
+  "classification_report": {
+    "Average": {
+      "precision": 0.7272727272727273,
+      "recall": 0.7567567567567568,
+      "f1-score": 0.7417218543046358,
+      "support": 74.0
+    },
+    "Excellent": {
+      "precision": 0.6153846153846154,
+      "recall": 0.5714285714285714,
+      "f1-score": 0.5925925925925926,
+      "support": 14.0
+    },
+    "Good": {
+      "precision": 0.7878787878787878,
+      "recall": 0.7878787878787878,
+      "f1-score": 0.7878787878787878,
+      "support": 99.0
+    },
+    "Needs Improvement": {
+      "precision": 0.7272727272727273,
+      "recall": 0.6153846153846154,
+      "f1-score": 0.6666666666666666,
+      "support": 13.0
+    },
+    "accuracy": 0.75,
+    "macro avg": {
+      "precision": 0.7144522144522145,
+      "recall": 0.6828621828621829,
+      "f1-score": 0.6972149753606707,
+      "support": 200.0
+    },
+    "weighted avg": {
+      "precision": 0.7494405594405597,
+      "recall": 0.75,
+      "f1-score": 0.74925190090753,
+      "support": 200.0
+    }
+  },
+  "binary_classification": {
+    "accuracy": 0.915,
+    "confusion_matrix": [
+      [
+        8,
+        5
+      ],
+      [
+        12,
+        175
+      ]
+    ],
+    "f1_macro": 0.7192634794814632,
+    "per_class": {
+      "0": {
+        "precision": 0.4,
+        "recall": 0.6153846153846154,
+        "f1": 0.48484848484848486,
+        "support": 13
+      },
+      "1": {
+        "precision": 0.9722222222222222,
+        "recall": 0.9358288770053476,
+        "f1": 0.9536784741144414,
+        "support": 187
+      }
+    }
+  },
+  "binary_classification_report": {
+    "0": {
+      "precision": 0.4,
+      "recall": 0.6153846153846154,
+      "f1-score": 0.48484848484848486,
+      "support": 13.0
+    },
+    "1": {
+      "precision": 0.9722222222222222,
+      "recall": 0.9358288770053476,
+      "f1-score": 0.9536784741144414,
+      "support": 187.0
+    },
+    "accuracy": 0.915,
+    "macro avg": {
+      "precision": 0.6861111111111111,
+      "recall": 0.7756067461949815,
+      "f1-score": 0.7192634794814632,
+      "support": 200.0
+    },
+    "weighted avg": {
+      "precision": 0.9350277777777777,
+      "recall": 0.915,
+      "f1-score": 0.9232045248121543,
+      "support": 200.0
+    }
+  },
+  "dataset_info": {
+    "rows": 800,
+    "columns": [
+      "student_id",
+      "department",
+      "semester",
+      "previous_cgpa",
+      "previous_percentage",
+      "internal_marks",
+      "assignment_score",
+      "assignment_completion_pct",
+      "attendance_pct",
+      "study_hours_daily",
+      "backlogs",
+      "study_consistency",
+      "extracurricular",
+      "mathematics_marks",
+      "programming_marks",
+      "core_theory_marks",
+      "lab_practical_marks",
+      "communication_marks",
+      "final_cgpa",
+      "performance_category",
+      "pass_fail"
+    ],
+    "synthetic": true,
+    "class_distribution": {
+      "Good": 396,
+      "Average": 298,
+      "Excellent": 55,
+      "Needs Improvement": 51
+    },
+    "pass_rate": 0.93125
+  }
+}

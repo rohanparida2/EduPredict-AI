@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | Settings{% endblock %}
+{% block content %}
+<header>
+    <p class="eyebrow">Account / Data notes</p>
+    <h1 class="page-title">Settings</h1>
+</header>
+<div class="panel" data-searchable>
+    <div class="card-body p-4">
+        <h2 class="section-title">Project Configuration</h2>
+        <p class="text-muted">This project is configured for a synthetic dataset and educational demo use. Model estimates are not guaranteed for actual student performance outcomes.</p>
+        <div class="list-group">
+            <div class="list-group-item">Theme: Black, crimson red, light grey, and purple accents</div>
+            <div class="list-group-item">Data source: synthetic dataset in dataset/student_performance_dataset.csv</div>
+            <div class="list-group-item">Model note: class imbalance handled using balanced weights and stratified split</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

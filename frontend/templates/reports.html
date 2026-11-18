@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | Reports{% endblock %}
+{% block content %}
+<header>
+    <p class="eyebrow">History / Explainability / Export</p>
+    <h1 class="page-title">Reports</h1>
+</header>
+
+{% if result %}
+<div class="controls-row">
+    <span class="control-label">Report Sections</span>
+    <div class="view-toggle ms-auto" data-view-toggle="#report-sections" role="group" aria-label="Change report layout">
+        <button type="button" data-view="grid" aria-pressed="true">Grid View</button>
+        <button type="button" data-view="list" aria-pressed="false">List View</button>
+    </div>
+</div>
+<section class="view-items" id="report-sections">
+    <article class="summary-card" data-searchable>
+        <div class="summary-marker"><span>Predicted</span><strong>{{ result.predicted_cgpa }}</strong><span>CGPA</span></div>
+        <div class="summary-content">
+            <p class="eyebrow">Latest prediction</p>
+            <h2>{{ result.performance_category }}</h2>
+            <p class="meta">Pass probability {{ (result.pass_probability * 100)|round(1) }}% · Confidence {{ (result.confidence * 100)|round(1) }}%</p>
+            <a href="{{ url_for('download_report') }}" class="btn">Download PDF Report</a>
+        </div>
+    </article>
+    <article class="panel" data-searchable>
+        <div class="card-body">
+            <p class="eyebrow">Subject breakdown</p>
+            <h2 class="section-title">Risk Indicators</h2>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead><tr><th scope="col">Subject</th><th scope="col">Risk indicator</th></tr></thead>
+                    <tbody>
+                        {% for subject, value in result.subject_risk.items() %}
+                        <tr><th scope="row">{{ subject.replace('_', ' ') }}</th><td>{{ (value * 100)|round(1) }}%</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </article>
+    {% if result.expert %}
+    <article class="panel" data-searchable>
+        <div class="card-body">
+            <p class="eyebrow">Forward-chaining rule trace</p>
+            <h2 class="section-title">Recommendations</h2>
+            {% if result.expert.rule_trace %}
+            <ul class="list-group">
+                {% for item in result.expert.rule_trace %}
+                <li class="list-group-item"><strong>{{ item.id }} · Priority {{ item.priority }}</strong><div>{{ item.recommendation }}</div></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-muted">No expert-system rules fired for the latest prediction.</p>
+            {% endif %}
+        </div>
+    </article>
+    {% endif %}
+    {% if explanation %}
+    <article class="panel" data-searchable>
+        <div class="card-body">
+            <p class="eyebrow">Explainable AI</p>
+            <h2 class="section-title">Why This Estimate?</h2>
+            <div class="chart-frame"><canvas id="shapChart" data-chart aria-label="Features raising or lowering the CGPA estimate"></canvas></div>
+            <ul class="mt-3">
+                {% for item in explanation %}
+                <li>{{ item.summary }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </article>
+    {% endif %}
+</section>
+{% else %}
+<section class="panel"><div class="card-body">
+    <p class="eyebrow">No report data yet</p>
+    <h2 class="section-title">Generate a prediction first</h2>
+    <p class="text-muted">Run a prediction to see its explanation and download a report.</p>
+    <a class="btn btn-primary" href="{{ url_for('predict_route') }}">Go to AI Prediction</a>
+</div></section>
+{% endif %}
+
+{% if explanation %}
+<script>
+const shapFeatures = {{ explanation|map(attribute='feature')|list|tojson }};
+const shapImpacts = {{ explanation|map(attribute='impact')|list|tojson }};
+new Chart(document.getElementById('shapChart'), {
+  type: 'bar',
+  data: {
+    labels: shapFeatures,
+    datasets: [{
+      label: 'Impact on predicted CGPA',
+      data: shapImpacts,
+      backgroundColor: shapImpacts.map((value) => value >= 0 ? window.eduPredictTheme.purple : window.eduPredictTheme.red),
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: { grid: { color: window.eduPredictTheme.grid }, ticks: { color: window.eduPredictTheme.muted } },
+      y: { grid: { display: false }, ticks: { color: window.eduPredictTheme.light } }
+    }
+  }
+});
+</script>
+{% endif %}
+{% endblock %}

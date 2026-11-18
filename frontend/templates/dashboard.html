@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | Dashboard{% endblock %}
+{% block content %}
+<header class="page-heading" id="updates">
+    <p class="eyebrow">Academic intelligence / Student overview</p>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="text-muted">Welcome back, {{ user.name }}. Your academic signals and latest model estimates are shown below.</p>
+</header>
+
+<div class="controls-row">
+    <span class="control-label">Prediction Overview</span>
+    <div class="view-toggle ms-auto" data-view-toggle="#dashboard-cards" role="group" aria-label="Change overview layout">
+        <button type="button" data-view="grid" aria-pressed="true">Grid View</button>
+        <button type="button" data-view="list" aria-pressed="false">List View</button>
+    </div>
+</div>
+
+<section class="view-items" id="dashboard-cards" aria-label="Featured academic summaries">
+    <article class="summary-card" data-searchable>
+        <div class="summary-marker">
+            <span>Semester {{ profile.semester if profile else '—' }}</span>
+            <strong>{{ prediction.predicted_cgpa if prediction else '—' }}</strong>
+            <span>Predicted CGPA</span>
+        </div>
+        <div class="summary-content">
+            <p class="eyebrow">Academic forecast</p>
+            <h2>Predicted CGPA</h2>
+            <p class="meta">{% if prediction %}Model estimate · Confidence {{ prediction.confidence }}{% else %}Run a prediction to see your forecast.{% endif %}</p>
+            <a href="{{ url_for('predict_route') }}" class="btn">View Details</a>
+        </div>
+    </article>
+    <article class="summary-card" data-searchable>
+        <div class="summary-marker">
+            <span>Performance</span>
+            <strong>{% if prediction %}{{ prediction.performance_category }}{% else %}—{% endif %}</strong>
+            <span>Category</span>
+        </div>
+        <div class="summary-content">
+            <p class="eyebrow">ML predicts · Expert system reasons</p>
+            <h2>{{ prediction.performance_category if prediction else 'No prediction yet' }}</h2>
+            {% if prediction %}
+                {% if prediction.performance_category in ['Needs Improvement', 'Average'] %}
+                    <span class="tag"><span class="tag-mark" aria-hidden="true">!</span> At Risk</span>
+                {% else %}
+                    <span class="tag tag-positive"><span class="tag-mark" aria-hidden="true">+</span> Improving</span>
+                {% endif %}
+                <p class="meta mt-2">Pass probability {{ (prediction.pass_probability * 100)|round(1) }}%</p>
+            {% else %}
+                <p class="meta">Add academic inputs to receive a category estimate.</p>
+            {% endif %}
+            <a href="{{ url_for('predict_route') }}" class="btn">View Details</a>
+        </div>
+    </article>
+</section>
+
+<div class="row g-4 mt-4">
+    <section class="col-lg-7" data-searchable>
+        <div class="panel h-100">
+            <div class="card-body">
+                <p class="eyebrow">Student record</p>
+                <h2 class="section-title">Academic Snapshot</h2>
+                <div class="table-wrap">
+                    <table class="table align-middle">
+                        <tbody>
+                            <tr><th scope="row">Student</th><td>{{ user.name }}</td></tr>
+                            <tr><th scope="row">Department</th><td>{{ profile.department if profile else 'Not set' }}</td></tr>
+                            <tr><th scope="row">Semester</th><td>{{ profile.semester if profile else 'Not set' }}</td></tr>
+                            <tr><th scope="row">Confidence</th><td>{{ prediction.confidence if prediction else 'No estimate yet' }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="col-lg-5" data-searchable>
+        <div class="panel h-100">
+            <div class="card-body">
+                <p class="eyebrow">Continue your work</p>
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('academic_details') }}" class="btn btn-primary">Add Academic Details</a>
+                    <a href="{{ url_for('predict_route') }}" class="btn">Run AI Prediction</a>
+                    <a href="{{ url_for('what_if') }}" class="btn">What-If Analysis</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% if prediction and prediction.subject_risk %}
+<section class="mt-5">
+    <p class="eyebrow">Latest prediction</p>
+    <h2 class="section-title">Subject Risk</h2>
+    <div class="controls-row">
+        <span class="control-label">Subjects</span>
+        <div class="view-toggle ms-auto" data-view-toggle="#subject-cards" role="group" aria-label="Change subject layout">
+            <button type="button" data-view="grid" aria-pressed="true">Grid View</button>
+            <button type="button" data-view="list" aria-pressed="false">List View</button>
+        </div>
+    </div>
+    <div class="view-items" id="subject-cards">
+        {% for subject, value in prediction.subject_risk.items() %}
+        <article class="panel" data-searchable>
+            <div class="card-body">
+                <p class="eyebrow">{{ subject.replace('_', ' ') }}</p>
+                <h3>{{ (value * 100)|round(1) }}% risk indicator</h3>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

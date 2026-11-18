@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | Predict. Analyse. Improve.{% endblock %}
+{% block content %}
+<section class="hero-section" data-searchable>
+    <div>
+        <p class="eyebrow">Student performance / AI-assisted insight</p>
+        <h1 class="page-title hero-title">Predict.<br>Analyse.<br><span class="accent-text">Improve.</span></h1>
+        <p class="hero-copy">A hybrid AI system for academic forecasts, explainable insights, and expert-guided study recommendations.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="{{ url_for('login') }}" class="btn btn-lg">Login</a>
+        </div>
+    </div>
+</section>
+
+<section class="feature-band mt-5" id="about">
+    <p class="eyebrow">Featured capabilities</p>
+    <h2 class="section-title">One view. Multiple AI methods.</h2>
+    <div class="row g-4 mt-2">
+        <article class="col-md-4" data-searchable>
+            <div class="panel h-100"><div class="card-body">
+                <p class="eyebrow">01 / Prediction</p>
+                <h3>Machine Learning</h3>
+                <p class="text-muted">Estimate CGPA, performance category, pass probability, and subject risk from academic inputs.</p>
+            </div></div>
+        </article>
+        <article class="col-md-4" data-searchable>
+            <div class="panel h-100"><div class="card-body">
+                <p class="eyebrow">02 / Reasoning</p>
+                <h3>Expert System</h3>
+                <p class="text-muted">Apply explicit academic rules to organize recommendations and a weekly study plan.</p>
+            </div></div>
+        </article>
+        <article class="col-md-4" data-searchable>
+            <div class="panel h-100"><div class="card-body">
+                <p class="eyebrow">03 / Explainability</p>
+                <h3>Understand The Estimate</h3>
+                <p class="text-muted">Review feature importance and local SHAP explanations alongside model output.</p>
+            </div></div>
+        </article>
+    </div>
+</section>
+<p class="text-muted small mt-4 text-uppercase">Training data is synthetic and for educational demonstration only.</p>
+{% endblock %}

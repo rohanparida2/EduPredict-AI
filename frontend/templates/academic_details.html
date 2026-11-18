@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | Academic Details{% endblock %}
+{% block content %}
+<header>
+    <p class="eyebrow">Student data / Input</p>
+    <h1 class="page-title">Academic Details</h1>
+</header>
+<div class="panel" data-searchable>
+    <div class="card-body p-4">
+        <h2 class="section-title">Academic Data Input</h2>
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Department</label>
+                    <select class="form-select" name="department" required>
+                        <option value="CSE">CSE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                        <option value="IT">IT</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Semester</label>
+                    <input type="number" class="form-control" name="semester" min="2" max="8" value="5" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Previous CGPA</label>
+                    <input type="number" step="0.01" min="0" max="10" class="form-control" name="previous_cgpa" value="7.2" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Previous Percentage</label>
+                    <input type="number" step="0.1" min="0" max="100" class="form-control" name="previous_percentage" value="74.2" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Internal Marks</label>
+                    <input type="number" step="0.1" min="0" max="50" class="form-control" name="internal_marks" value="32.4" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Assignment Score</label>
+                    <input type="number" step="0.1" min="0" max="20" class="form-control" name="assignment_score" value="13.8" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Assignment Completion %</label>
+                    <input type="number" step="0.1" min="0" max="100" class="form-control" name="assignment_completion_pct" value="80" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Attendance %</label>
+                    <input type="number" step="0.1" min="0" max="100" class="form-control" name="attendance_pct" value="86" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Study Hours / Day</label>
+                    <input type="number" step="0.1" min="0" max="16" class="form-control" name="study_hours_daily" value="4.5" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Backlogs</label>
+                    <input type="number" min="0" max="6" class="form-control" name="backlogs" value="1" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Study Consistency (1-5)</label>
+                    <input type="number" min="1" max="5" class="form-control" name="study_consistency" value="4" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Extracurricular (0/1)</label>
+                    <input type="number" min="0" max="1" class="form-control" name="extracurricular" value="1" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Mathematics Marks</label>
+                    <input type="number" step="0.1" min="0" max="100" class="form-control" name="mathematics_marks" value="70" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Programming Marks</label>
+                    <input type="number" step="0.1" min="0" max="100" class="form-control" name="programming_marks" value="75" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Core Theory Marks</label>
+                    <input type="number" step="0.1" min="0" max="100" class="form-control" name="core_theory_marks" value="68" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Lab Practical Marks</label>
+                    <input type="number" step="0.1" min="0" max="100" class="form-control" name="lab_practical_marks" value="80" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Communication Marks</label>
+                    <input type="number" step="0.1" min="0" max="100" class="form-control" name="communication_marks" value="72" required>
+                </div>
+            </div>
+            <button class="btn btn-primary mt-4" type="submit">Save & Predict</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

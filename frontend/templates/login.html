@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-7">
+        <div class="card form-card" data-searchable>
+            <div class="card-body p-4">
+                <p class="eyebrow">Welcome back</p>
+                <h1 class="page-title">Login</h1>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                <p class="text-center mt-3 small text-muted">Demo student: demo@edupredict.ai / demo123</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

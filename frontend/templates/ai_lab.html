@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | AI Lab{% endblock %}
+{% block content %}
+<header>
+    <p class="eyebrow">Models / Genetic algorithm / Explainability</p>
+    <h1 class="page-title">AI Lab</h1>
+</header>
+<div class="row g-4">
+    <section class="col-lg-6" data-searchable>
+        <div class="panel h-100"><div class="card-body">
+            <p class="eyebrow">Evaluation</p>
+            <h2 class="section-title">Model Metrics</h2>
+            <pre>{{ metrics | tojson(indent=2) }}</pre>
+        </div></div>
+    </section>
+    <section class="col-lg-6" data-searchable>
+        <div class="panel h-100"><div class="card-body">
+            <p class="eyebrow">Feature selection</p>
+            <h2 class="section-title">GA Selected Features</h2>
+            {% if ga %}
+                <p>Selected {{ ga.selected_features|length }} of {{ ga.all_features_count }} encoded features.</p>
+                <p>Fitness: {{ ga.best_fitness|round(4) }}</p>
+                <pre>{{ ga.selected_features | tojson(indent=2) }}</pre>
+                <div class="chart-frame"><canvas id="gaHistoryChart" data-chart aria-label="GA fitness across generations"></canvas></div>
+            {% else %}
+                <p class="text-muted">Run <code>python ml/ga_feature_selection.py</code> to generate the feature-selection comparison.</p>
+            {% endif %}
+        </div></div>
+    </section>
+</div>
+<section class="panel mt-4">
+    <div class="card-body">
+        <p class="eyebrow">Model interpretation</p>
+        <h2 class="section-title">Global Feature Importance</h2>
+        <div class="chart-frame"><canvas id="gaFeatureChart" data-chart aria-label="Global feature importance chart"></canvas></div>
+    </div>
+</section>
+
+<script>
+{% if ga %}
+const generationHistory = {{ ga.generation_history|tojson }};
+new Chart(document.getElementById('gaHistoryChart'), {
+  type: 'line',
+  data: {
+    labels: generationHistory.map((_, index) => `Generation ${index + 1}`),
+    datasets: [{ label: 'Best fitness', data: generationHistory, borderColor: window.eduPredictTheme.red, backgroundColor: window.eduPredictTheme.red, pointRadius: 2, tension: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { grid: { color: window.eduPredictTheme.grid }, ticks: { color: window.eduPredictTheme.muted } },
+      y: { grid: { color: window.eduPredictTheme.grid }, ticks: { color: window.eduPredictTheme.muted } }
+    }
+  }
+});
+{% endif %}
+
+const featureLabels = {{ feature_importance|map(attribute='feature')|list|tojson }};
+const featureValues = {{ feature_importance|map(attribute='importance')|list|tojson }};
+new Chart(document.getElementById('gaFeatureChart'), {
+  type: 'bar',
+  data: {
+    labels: featureLabels,
+    datasets: [{ label: 'Feature importance', data: featureValues, backgroundColor: window.eduPredictTheme.purple, borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: { grid: { color: window.eduPredictTheme.grid }, ticks: { color: window.eduPredictTheme.muted } },
+      y: { grid: { display: false }, ticks: { color: window.eduPredictTheme.light } }
+    }
+  }
+});
+</script>
+{% endblock %}

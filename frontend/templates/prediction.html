@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | AI Prediction{% endblock %}
+{% block content %}
+<header>
+    <p class="eyebrow">Machine learning / Decision support</p>
+    <h1 class="page-title">AI Prediction</h1>
+</header>
+<div class="row g-4">
+    <section class="col-lg-6">
+        <div class="panel h-100" data-searchable>
+            <div class="card-body">
+                <p class="eyebrow">Student data</p>
+                <h2 class="section-title">Academic Input</h2>
+                <form method="POST">
+                    <div class="row g-3">
+                        {% set numeric_fields = [
+                            ('semester', 'Semester', 2, 8, 1),
+                            ('previous_cgpa', 'Previous CGPA', 0, 10, 0.01),
+                            ('previous_percentage', 'Previous Percentage', 0, 100, 0.1),
+                            ('internal_marks', 'Internal Marks', 0, 50, 0.1),
+                            ('assignment_score', 'Assignment Score', 0, 20, 0.1),
+                            ('assignment_completion_pct', 'Assignment Completion %', 0, 100, 0.1),
+                            ('attendance_pct', 'Attendance %', 0, 100, 0.1),
+                            ('study_hours_daily', 'Study Hours Daily', 0, 16, 0.1),
+                            ('backlogs', 'Backlogs', 0, 6, 1),
+                            ('study_consistency', 'Study Consistency', 1, 5, 1),
+                            ('extracurricular', 'Extracurricular (0 or 1)', 0, 1, 1),
+                            ('mathematics_marks', 'Mathematics Marks', 0, 100, 0.1),
+                            ('programming_marks', 'Programming Marks', 0, 100, 0.1),
+                            ('core_theory_marks', 'Core Theory Marks', 0, 100, 0.1),
+                            ('lab_practical_marks', 'Lab Practical Marks', 0, 100, 0.1),
+                            ('communication_marks', 'Communication Marks', 0, 100, 0.1)
+                        ] %}
+                        <div class="col-md-6">
+                            <label class="form-label" for="department">Department</label>
+                            <select class="form-select" id="department" name="department" required>
+                                {% for dept in ['CSE', 'ECE', 'Mechanical', 'Civil', 'IT'] %}
+                                    <option value="{{ dept }}" {% if data.get('department', 'CSE') == dept %}selected{% endif %}>{{ dept }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% for key, label, min_value, max_value, step_value in numeric_fields %}
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ key }}">{{ label }}</label>
+                            <input type="number" id="{{ key }}" name="{{ key }}" class="form-control" min="{{ min_value }}" max="{{ max_value }}" step="{{ step_value }}" value="{{ data.get(key, '') }}" required>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-4">Generate Prediction</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <section class="col-lg-6">
+        {% if result %}
+        <div class="panel h-100" data-searchable>
+            <div class="card-body">
+                <p class="eyebrow">ML predicts · Expert system reasons</p>
+                <h2 class="section-title">Forecast Summary</h2>
+                <div class="summary-card mb-4">
+                    <div class="summary-marker"><span>Predicted</span><strong>{{ result.predicted_cgpa }}</strong><span>CGPA</span></div>
+                    <div class="summary-content">
+                        <h3>{{ result.performance_category }}</h3>
+                        <p class="meta">Pass probability {{ (result.pass_probability * 100)|round(1) }}% · Confidence {{ (result.confidence * 100)|round(1) }}%</p>
+                    </div>
+                </div>
+                <h3 class="section-title">Subject Risk</h3>
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead><tr><th scope="col">Subject</th><th scope="col">Risk indicator</th></tr></thead>
+                        <tbody>
+                            {% for subject, value in result.subject_risk.items() %}
+                            <tr><th scope="row">{{ subject.replace('_', ' ') }}</th><td>{{ (value * 100)|round(1) }}%</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if expert %}
+                <section id="recommendations" class="mt-4">
+                    <h3 class="section-title">Expert System Recommendations</h3>
+                    {% if expert.rule_trace %}
+                    <p class="eyebrow">Rule trace / Fired rules</p>
+                    <ul class="list-group mb-3">
+                        {% for item in expert.rule_trace %}
+                        <li class="list-group-item">
+                            <strong>{{ item.id }} · Priority {{ item.priority }}</strong>
+                            <div>{{ item.recommendation }}</div>
+                            <small class="text-muted">{{ item.reasons|join('; ') }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No expert-system rules fired for these inputs.</p>
+                    {% endif %}
+                    <h4>Weekly Study Plan</h4>
+                    <ul>
+                        {% for item in expert.weekly_plan %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="panel h-100" id="recommendations" data-searchable><div class="card-body">
+            <p class="eyebrow">How it works</p>
+            <h2 class="section-title">An estimate, not a guarantee</h2>
+            <p class="text-muted">Submit academic details to get model predictions, subject risk indicators, SHAP explanations, and rule-based recommendations.</p>
+            <p class="text-muted">The model is trained on a synthetic educational dataset; it is not validated on real student records.</p>
+        </div></div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

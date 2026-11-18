@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | What-If Analysis{% endblock %}
+{% block content %}
+<header>
+    <p class="eyebrow">Scenario planning / Model estimate</p>
+    <h1 class="page-title">What-If Analysis</h1>
+</header>
+<div class="row g-4">
+    <section class="col-lg-5">
+        <div class="panel h-100" data-searchable><div class="card-body">
+            <p class="eyebrow">Controllable inputs</p>
+            <h2 class="section-title">Test a Scenario</h2>
+            <form method="POST">
+                <div class="mb-4">
+                    <label class="form-label" for="whatif-attendance">Attendance % <output data-range-output="whatif-attendance">{{ data.attendance_pct if data else baseline.attendance_pct }}</output></label>
+                    <input id="whatif-attendance" type="range" class="form-range" name="attendance_pct" min="0" max="100" step="0.1" value="{{ data.attendance_pct if data else baseline.attendance_pct }}">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" for="whatif-study">Study Hours / Day <output data-range-output="whatif-study">{{ data.study_hours_daily if data else baseline.study_hours_daily }}</output></label>
+                    <input id="whatif-study" type="range" class="form-range" name="study_hours_daily" min="0" max="16" step="0.1" value="{{ data.study_hours_daily if data else baseline.study_hours_daily }}">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" for="whatif-assignment">Assignment Completion % <output data-range-output="whatif-assignment">{{ data.assignment_completion_pct if data else baseline.assignment_completion_pct }}</output></label>
+                    <input id="whatif-assignment" type="range" class="form-range" name="assignment_completion_pct" min="0" max="100" step="0.1" value="{{ data.assignment_completion_pct if data else baseline.assignment_completion_pct }}">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" for="whatif-internal">Internal Marks <output data-range-output="whatif-internal">{{ data.internal_marks if data else baseline.internal_marks }}</output></label>
+                    <input id="whatif-internal" type="range" class="form-range" name="internal_marks" min="0" max="50" step="0.1" value="{{ data.internal_marks if data else baseline.internal_marks }}">
+                </div>
+                {% for key in ['department', 'semester', 'previous_cgpa', 'previous_percentage', 'assignment_score', 'backlogs', 'study_consistency', 'extracurricular', 'mathematics_marks', 'programming_marks', 'core_theory_marks', 'lab_practical_marks', 'communication_marks'] %}
+                <input type="hidden" name="{{ key }}" value="{{ (data if data else baseline).get(key, baseline.get(key, '')) }}">
+                {% endfor %}
+                <button class="btn btn-primary w-100" type="submit">Run What-If</button>
+            </form>
+        </div></div>
+    </section>
+    <section class="col-lg-7">
+        {% if new %}
+        <div class="panel h-100" data-searchable><div class="card-body">
+            <p class="eyebrow">Model comparison</p>
+            <h2 class="section-title">Original vs Updated Estimate</h2>
+            <div class="view-items">
+                <div class="summary-card">
+                    <div class="summary-marker"><span>Original</span><strong>{{ original.predicted_cgpa }}</strong><span>CGPA</span></div>
+                    <div class="summary-content"><h3>Baseline estimate</h3><p class="meta">Original scenario</p></div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-marker"><span>Updated</span><strong>{{ new.predicted_cgpa }}</strong><span>CGPA</span></div>
+                    <div class="summary-content"><h3>Scenario estimate</h3><p class="meta">Difference: {{ '%+.2f'|format(difference) }}</p></div>
+                </div>
+            </div>
+            <div class="chart-frame mt-4"><canvas id="whatIfChart" data-chart aria-label="Original and updated CGPA comparison"></canvas></div>
+            <p class="text-muted mt-3">Results are estimates based on a synthetic dataset, not guarantees of future academic outcomes.</p>
+        </div></div>
+        {% else %}
+        <div class="panel h-100" data-searchable><div class="card-body">
+            <p class="eyebrow">Scenario analysis</p>
+            <h2 class="section-title">Adjust inputs to compare estimates</h2>
+            <p class="text-muted">Your original and changed inputs are sent to the trained model. Results are estimates, not guarantees.</p>
+        </div></div>
+        {% endif %}
+    </section>
+</div>
+<script>
+document.querySelectorAll('input[type="range"][data-range-output], input[type="range"]').forEach((input) => {
+    const output = document.querySelector(`[data-range-output="${input.id}"]`);
+    if (!output) return;
+    const update = () => { output.value = input.value; output.textContent = input.value; };
+    input.addEventListener('input', update);
+    update();
+});
+{% if new %}
+new Chart(document.getElementById('whatIfChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Original', 'Updated'],
+    datasets: [{ label: 'Predicted CGPA', data: [{{ original.predicted_cgpa }}, {{ new.predicted_cgpa }}], backgroundColor: [window.eduPredictTheme.light, window.eduPredictTheme.red], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { grid: { display: false }, ticks: { color: window.eduPredictTheme.light } },
+      y: { min: 0, max: 10, grid: { color: window.eduPredictTheme.grid }, ticks: { color: window.eduPredictTheme.muted } }
+    }
+  }
+});
+{% endif %}
+</script>
+{% endblock %}

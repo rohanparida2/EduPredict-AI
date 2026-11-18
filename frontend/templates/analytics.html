@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}EduPredict AI | Performance Analytics{% endblock %}
+{% block content %}
+<header>
+    <p class="eyebrow">Model output / Visual analysis</p>
+    <h1 class="page-title">Performance Analytics</h1>
+</header>
+
+<div class="controls-row">
+    <span class="control-label">Analytics Panels</span>
+    <div class="view-toggle ms-auto" data-view-toggle="#analytics-panels" role="group" aria-label="Change analytics layout">
+        <button type="button" data-view="grid" aria-pressed="true">Grid View</button>
+        <button type="button" data-view="list" aria-pressed="false">List View</button>
+    </div>
+</div>
+
+<section class="view-items" id="analytics-panels">
+    <article class="panel" data-searchable>
+        <div class="card-body">
+            <p class="eyebrow">Latest forecast</p>
+            <h2 class="section-title">Predicted CGPA</h2>
+            {% if result %}
+            <div class="chart-frame"><canvas id="cgpaChart" data-chart aria-label="Predicted CGPA chart"></canvas></div>
+            {% else %}
+            <p class="text-muted">Generate a prediction to view a CGPA estimate.</p>
+            {% endif %}
+        </div>
+    </article>
+    <article class="panel" data-searchable>
+        <div class="card-body">
+            <p class="eyebrow">Latest forecast</p>
+            <h2 class="section-title">Subject-wise Risk</h2>
+            {% if result and result.subject_risk %}
+            <div class="chart-frame"><canvas id="subjectChart" data-chart aria-label="Subject risk chart"></canvas></div>
+            {% else %}
+            <p class="text-muted">Subject risk is available after a prediction.</p>
+            {% endif %}
+        </div>
+    </article>
+    <article class="panel" data-searchable>
+        <div class="card-body">
+            <p class="eyebrow">Trained model</p>
+            <h2 class="section-title">Global Feature Importance</h2>
+            <div class="chart-frame"><canvas id="featureChart" data-chart aria-label="Feature importance chart"></canvas></div>
+        </div>
+    </article>
+</section>
+
+<script>
+{% if result %}
+const predictedCgpa = {{ result.predicted_cgpa if result else 0 }};
+new Chart(document.getElementById('cgpaChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Predicted CGPA'],
+    datasets: [{ label: 'CGPA estimate', data: [predictedCgpa], backgroundColor: window.eduPredictTheme.red, borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { grid: { display: false }, ticks: { color: window.eduPredictTheme.light } },
+      y: { min: 0, max: 10, grid: { color: window.eduPredictTheme.grid }, ticks: { color: window.eduPredictTheme.muted } }
+    }
+  }
+});
+
+const subjectRisk = {{ result.subject_risk|tojson if result else '{}' }};
+new Chart(document.getElementById('subjectChart'), {
+  type: 'bar',
+  data: {
+    labels: Object.keys(subjectRisk).map((subject) => subject.replaceAll('_', ' ')),
+    datasets: [{ label: 'Risk indicator', data: Object.values(subjectRisk), backgroundColor: window.eduPredictTheme.light, borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { grid: { display: false }, ticks: { color: window.eduPredictTheme.light } },
+      y: { min: 0, max: 1, grid: { color: window.eduPredictTheme.grid }, ticks: { color: window.eduPredictTheme.muted } }
+    }
+  }
+});
+{% endif %}
+
+const featureLabels = {{ feature_importance|map(attribute='feature')|list|tojson }};
+const featureValues = {{ feature_importance|map(attribute='importance')|list|tojson }};
+new Chart(document.getElementById('featureChart'), {
+  type: 'bar',
+  data: {
+    labels: featureLabels,
+    datasets: [{ label: 'Importance', data: featureValues, backgroundColor: window.eduPredictTheme.purple, borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: { grid: { color: window.eduPredictTheme.grid }, ticks: { color: window.eduPredictTheme.muted } },
+      y: { grid: { display: false }, ticks: { color: window.eduPredictTheme.light } }
+    }
+  }
+});
+</script>
+{% endblock %}
